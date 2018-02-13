@@ -6,3 +6,6 @@ dist
 Pipfile
 Pipfile.lock
 mqttwrapper.egg-info
+
+build
+.DS_Store
