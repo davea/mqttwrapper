@@ -16,7 +16,10 @@ async def mqtt_loop(broker, topics, callback, context_callback, **kwargs):
             packet = message.publish_packet
             topic = packet.variable_header.topic_name
             payload = bytes(packet.payload.data)
-            await callback(topic, payload, **kwargs)
+            replies = await callback(topic, payload, **kwargs)
+            if replies is not None:
+                for reply_topic, reply_payload in replies:
+                    await client.publish(reply_topic, reply_payload)
     except ClientException:
         raise
 

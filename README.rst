@@ -46,6 +46,23 @@ callback function when it's called::
   def main():
       run_script(callback, broker="mqtt://127.0.0.1", topics=["my/awesome/topic1", "another/awesome/topic2"], context="hello", foo="bar")
 
+Publishing messages from the callback
+-------------------------------------
+
+Sometimes your callback function might want to publish its own MQTT messages,
+perhaps in reply to or an acknowledgement of a received message. This is
+possible by returning a list of ``(topic, payload)`` tuples from the callback,
+e.g.::
+
+    def callback(topic, payload):
+      print("Received payload {} on topic {}".format(payload, topic))
+      return [
+        ("{}/ack".format(topic), payload)
+      ]
+
+
+``mqttwrapper`` will take care of publishing these messages to the broker.
+
 Configuration
 -------------
 

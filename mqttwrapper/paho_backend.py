@@ -6,7 +6,10 @@ def on_connect(client, userdata, flags, rc):
         client.subscribe(topic)
 
 def on_message(client, userdata, msg):
-    userdata['callback'](msg.topic, msg.payload, **userdata['kwargs'])
+    replies = userdata['callback'](msg.topic, msg.payload, **userdata['kwargs'])
+    if replies is not None:
+        for topic, payload in replies:
+            client.publish(topic, payload)
 
 
 def run_script(callback, broker=None, topics=None, **kwargs):
