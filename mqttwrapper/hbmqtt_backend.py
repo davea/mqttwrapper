@@ -1,15 +1,20 @@
 import os
+import logging
 import asyncio
 
 from hbmqtt.client import MQTTClient, ClientException
 from hbmqtt.mqtt.constants import QOS_0
+
+log = logging.getLogger("mqttwrapper.hbmqtt_backend")
 
 async def mqtt_loop(broker, topics, callback, context_callback, **kwargs):
     if context_callback is not None:
         kwargs.update(await context_callback())
     client = MQTTClient()
     await client.connect(broker, cleansession=True)
+    log.debug("Connected")
     await client.subscribe([(topic, QOS_0) for topic in topics])
+    log.debug("Subscribed to %s", topics)
     try:
         while True:
             message = await client.deliver_message()
@@ -21,6 +26,7 @@ async def mqtt_loop(broker, topics, callback, context_callback, **kwargs):
                 for reply_topic, reply_payload in replies:
                     await client.publish(reply_topic, reply_payload)
     except ClientException:
+        log.exception("hbmqtt.client.ClientException:")
         raise
 
 
