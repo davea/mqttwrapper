@@ -46,6 +46,19 @@ callback function when it's called::
   def main():
       run_script(callback, broker="mqtt://127.0.0.1", topics=["my/awesome/topic1", "another/awesome/topic2"], context="hello", foo="bar")
 
+
+If you don't need any context passed to your callback, just the topic and
+payload of messages, you can run in 'importless' mode by creating a `callback`
+module which has a `callback` function defined, then execute the
+`mqttwrapper.run` module::
+
+  $ cat callback.py
+  def callback(topic, payload):
+      print(topic, payload)
+  
+  $ python -m mqttwrapper.run
+
+
 Publishing messages from the callback
 -------------------------------------
 

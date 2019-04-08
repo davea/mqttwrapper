@@ -8,7 +8,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='mqttwrapper',
-    version='0.0.4',
+    version='0.0.5',
     description='MQTT utility scripts made easy',
     long_description=long_description,
     url='https://github.com/davea/mqttwrapper',
@@ -23,6 +23,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     keywords='mqtt',
     packages=find_packages(),
