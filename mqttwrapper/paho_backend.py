@@ -12,6 +12,9 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     log.debug("Received message on %s", msg.topic)
+    if msg.retain and userdata['ignore_retained']:
+        log.debug("Ignoring retained message")
+        return
     replies = userdata['callback'](msg.topic, msg.payload, **userdata['kwargs'])
     log.debug("Callback completed.")
     if replies is not None:
@@ -22,7 +25,7 @@ def on_message(client, userdata, msg):
             log.debug("Published '%s' to %s", payload, topic)
 
 
-def run_script(callback, broker=None, topics=None, **kwargs):
+def run_script(callback, broker=None, topics=None, ignore_retained=False, **kwargs):
     if not broker:
         broker = os.environ['MQTT_BROKER']
     if not topics:
@@ -31,6 +34,7 @@ def run_script(callback, broker=None, topics=None, **kwargs):
     userdata = {
         'topics': topics,
         'callback': callback,
+        'ignore_retained': ignore_retained,
         'kwargs': kwargs
     }
 
