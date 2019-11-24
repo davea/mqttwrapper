@@ -21,7 +21,9 @@ Usage
 
 ``mqttwrapper.run_script`` handles the setup/maintenance of the MQTT connection
 and subscriptions to topics, and calls a callback function when messages are
-received.
+received. It can run in blocking mode where it will take care of the MQTT
+client handling or in non blocking mode where a new thread takes care this
+leaving your main thread free for other things.
 
 The simplest script looks something like this::
 
@@ -32,6 +34,14 @@ The simplest script looks something like this::
 
   def main():
       run_script(callback, broker="mqtt://127.0.0.1", topics=["my/awesome/topic1", "another/awesome/topic2"])
+
+or in non blocking mode:
+
+  def main():
+      run_script(callback, broker="mqtt://127.0.0.1", topics=["my/awesome/topic1", "another/awesome/topic2", blocking=False])
+      while True:
+          echo "Alive and kicking"
+          time.sleep(1)
 
 Any extra keyword arguments passed to ``run_script`` are passed back to the
 callback function when it's called::
