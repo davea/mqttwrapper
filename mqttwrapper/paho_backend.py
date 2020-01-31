@@ -1,6 +1,7 @@
 import os
 import logging
 import paho.mqtt.client as mqtt
+import threading
 
 log = logging.getLogger("mqttwrapper.paho_backend")
 
@@ -15,7 +16,10 @@ def on_message(client, userdata, msg):
     if msg.retain and userdata['ignore_retained']:
         log.debug("Ignoring retained message")
         return
-    replies = userdata['callback'](msg.topic, msg.payload, **userdata['kwargs'])
+    try:
+        replies = userdata['callback'](msg.topic, msg.payload, **userdata['kwargs'])
+    except Exception as e:
+        log.error("Callback caused exception", exc_info = True)
     log.debug("Callback completed.")
     if replies is not None:
         log.debug("Received %s replies", len(replies))
@@ -24,8 +28,10 @@ def on_message(client, userdata, msg):
             client.publish(topic, payload)
             log.debug("Published '%s' to %s", payload, topic)
 
+def mqtt_thread(client):
+    client.loop_forever()
 
-def run_script(callback, broker=None, topics=None, ignore_retained=False, **kwargs):
+def run_script(callback, broker=None, topics=None, ignore_retained=False, blocking=True, **kwargs):
     if not broker:
         broker = os.environ['MQTT_BROKER']
     if not topics:
@@ -42,4 +48,8 @@ def run_script(callback, broker=None, topics=None, ignore_retained=False, **kwar
     client.on_connect = on_connect
     client.on_message = on_message
     client.connect(broker.split("//")[1])
-    client.loop_forever()
+    if blocking:
+        client.loop_forever()
+    else:
+        t = threading.Thread(target=mqtt_thread, args=(client,), daemon=True)
+        t.start()
