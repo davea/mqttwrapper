@@ -23,10 +23,15 @@ def on_message(client, userdata, msg):
     log.debug("Callback completed.")
     if replies is not None:
         log.debug("Received %s replies", len(replies))
-        for topic, payload in replies:
-            log.debug("Publishing '%s' to %s", payload, topic)
-            client.publish(topic, payload)
-            log.debug("Published '%s' to %s", payload, topic)
+        for reply in replies:
+            try:
+                topic, payload, retain = reply
+            except ValueError:
+                topic, payload = reply
+                retain = False
+            log.debug("Publishing '%s' to %s (retain: %s)", payload, topic, retain)
+            client.publish(topic, payload, retain=retain)
+            log.debug("Published '%s' to %s (retain: %s)", payload, topic, retain)
 
 def mqtt_thread(client):
     client.loop_forever()

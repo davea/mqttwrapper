@@ -80,7 +80,7 @@ Publishing messages from the callback
 
 Sometimes your callback function might want to publish its own MQTT messages,
 perhaps in reply to or an acknowledgement of a received message. This is
-possible by returning a list of ``(topic, payload)`` tuples from the callback,
+possible by returning an iterable of ``(topic, payload)`` tuples from the callback,
 e.g.::
 
     def callback(topic, payload):
@@ -91,6 +91,9 @@ e.g.::
 
 
 ``mqttwrapper`` will take care of publishing these messages to the broker.
+
+These tuples can optionally take the form ``(topic, payload, True)`` if you want
+the published message to be marked as retained.
 
 Configuration
 -------------
