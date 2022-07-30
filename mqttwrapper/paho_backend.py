@@ -3,9 +3,13 @@ import logging
 import paho.mqtt.client as mqtt
 import threading
 
+client = None
+connected = False
 log = logging.getLogger("mqttwrapper.paho_backend")
 
 def on_connect(client, userdata, flags, rc):
+    global connected
+    connected = True
     log.debug("Connected")
     for topic in userdata['topics']:
         client.subscribe(topic)
@@ -37,6 +41,7 @@ def mqtt_thread(client):
     client.loop_forever()
 
 def run_script(callback, broker=None, topics=None, ignore_retained=False, blocking=True, **kwargs):
+    global client
     if not broker:
         broker = os.environ['MQTT_BROKER']
     if not topics:
@@ -58,3 +63,14 @@ def run_script(callback, broker=None, topics=None, ignore_retained=False, blocki
     else:
         t = threading.Thread(target=mqtt_thread, args=(client,), daemon=True)
         t.start()
+
+def publish(topic: str, payload: str, qos: int = 0, retain: bool = False) -> bool:
+    if client and connected:
+        client.publish(topic, payload, qos, retain)
+        return True
+    else:
+        log.error("MQTT client is not initialized or not connected")
+        return False
+
+def is_connected() -> bool:
+    return connected
