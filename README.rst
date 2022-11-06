@@ -65,7 +65,7 @@ module which has a `callback` function defined, then execute the
   $ cat callback.py
   def callback(topic, payload):
       print(topic, payload)
-  
+
   $ python -m mqttwrapper.run
 
 Retained messages
@@ -74,6 +74,16 @@ Retained messages
 You can ignore MQTT retained messages by passing ``ignore_retained=True`` when
 calling ``run_script``. NB this is currently not supported by the hbmqtt
 backend.
+
+Publishing messages
+-------------------
+Once connected, messages can be published using
+
+e.g.::
+
+    if mqttwrapper.is_connected():
+        mqttwrapper.publish("temperature/outside", "25.0")
+
 
 Publishing messages from the callback
 -------------------------------------
