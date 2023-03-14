@@ -16,6 +16,7 @@ def on_message(client, userdata, msg):
     if msg.retain and userdata['ignore_retained']:
         log.debug("Ignoring retained message")
         return
+    replies = None
     try:
         replies = userdata['callback'](msg.topic, msg.payload, **userdata['kwargs'])
     except Exception as e:
