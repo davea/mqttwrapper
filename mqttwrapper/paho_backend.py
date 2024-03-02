@@ -53,7 +53,9 @@ def run_script(callback, broker=None, topics=None, ignore_retained=False, blocki
     client = mqtt.Client(userdata=userdata)
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect(broker.split("//")[1])
+    if "//"  in broker: # mqtt:// prefix is optional (NB mqtts:// is not supported)
+        broker = broker.split("//")[1]
+    client.connect(broker)
     if blocking:
         client.loop_forever()
     else:
