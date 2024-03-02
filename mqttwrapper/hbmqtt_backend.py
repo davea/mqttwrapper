@@ -1,11 +1,15 @@
 import os
 import logging
 import asyncio
+from warnings import warn
 
 from hbmqtt.client import MQTTClient, ClientException
 from hbmqtt.mqtt.constants import QOS_0
 
 log = logging.getLogger("mqttwrapper.hbmqtt_backend")
+
+warn("hbmqtt backend is deprecated and will be removed in the future.", DeprecationWarning)
+log.warn("hbmqtt backend is deprecated and will be removed in the future.")
 
 async def mqtt_loop(broker, topics, callback, context_callback, **kwargs):
     if context_callback is not None:

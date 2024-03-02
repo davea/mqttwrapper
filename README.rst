@@ -12,7 +12,8 @@ Install from PyPI::
   $ pip install mqttwrapper
 
 By default ``paho-mqtt`` will be used as the MQTT library, but you can use
-``hbmqtt`` if you wish - see below. To install, use::
+``hbmqtt`` if you wish, though support for this is deprecated and will be
+removed in the future. To install, use::
 
   $ pip install mqttwrapper[hbmqtt]
 
@@ -106,6 +107,8 @@ environment variables used instead:
 
 asyncio/hbmqtt
 --------------
+
+NB This feature is deprecated and will be removed in the future.
 
 The asyncio-powered ``hbmqtt`` MQTT library can be used instead, if you like::
 
