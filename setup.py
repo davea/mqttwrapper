@@ -27,7 +27,7 @@ setup(
     ],
     keywords='mqtt',
     packages=find_packages(),
-    install_requires=['paho-mqtt'],
+    install_requires=['paho-mqtt>=2.0.0'],
     extras_require={
         'hbmqtt': ['hbmqtt'],
     },

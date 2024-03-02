@@ -50,7 +50,7 @@ def run_script(callback, broker=None, topics=None, ignore_retained=False, blocki
         'kwargs': kwargs
     }
 
-    client = mqtt.Client(userdata=userdata)
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, userdata=userdata)
     client.on_connect = on_connect
     client.on_message = on_message
     if "//"  in broker: # mqtt:// prefix is optional (NB mqtts:// is not supported)
