@@ -23,6 +23,7 @@ def on_message(client, userdata, msg):
         log.error("Callback caused exception", exc_info = True)
     log.debug("Callback completed.")
     if replies is not None:
+        replies = list(replies)
         log.debug("Received %s replies", len(replies))
         for reply in replies:
             try:
