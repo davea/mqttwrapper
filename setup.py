@@ -1,6 +1,7 @@
-from setuptools import setup, find_packages
 from codecs import open
 from os import path
+
+from setuptools import find_packages, setup
 
 here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
@@ -28,7 +29,4 @@ setup(
     keywords='mqtt',
     packages=find_packages(),
     install_requires=['paho-mqtt>=2.0.0'],
-    extras_require={
-        'hbmqtt': ['hbmqtt'],
-    },
 )

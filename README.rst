@@ -11,11 +11,7 @@ Install from PyPI::
 
   $ pip install mqttwrapper
 
-By default ``paho-mqtt`` will be used as the MQTT library, but you can use
-``hbmqtt`` if you wish, though support for this is deprecated and will be
-removed in the future. To install, use::
-
-  $ pip install mqttwrapper[hbmqtt]
+``paho-mqtt`` is used as the underlying MQTT library.
 
 Usage
 -----
@@ -73,8 +69,7 @@ Retained messages
 -----------------
 
 You can ignore MQTT retained messages by passing ``ignore_retained=True`` when
-calling ``run_script``. NB this is currently not supported by the hbmqtt
-backend.
+calling ``run_script``.
 
 Publishing messages from the callback
 -------------------------------------
@@ -105,56 +100,10 @@ environment variables used instead:
 - ``MQTT_BROKER``: MQTT broker to connect to, e.g. ``mqtt://127.0.0.1/``
 - ``MQTT_TOPICS``: Comma-separated list of topics to subscribe to, e.g. ``my/topic1,my/topic2``
 
-asyncio/hbmqtt
---------------
-
-NB This feature is deprecated and will be removed in the future.
-
-The asyncio-powered ``hbmqtt`` MQTT library can be used instead, if you like::
-
-  from mqttwrapper.hbmqtt_backend import run_script
-
-  async def callback(topic, payload):
-      print("Received payload {} on topic {}".format(payload, topic))
-
-
-Note that your callback must be an awaitable in this case.
-
-Your callback may require context arguments which themselves are async objects
-or awaitables which poses a challenge: how to set these up outside of an asyncio
-event loop before calling ``run_script``? In this case, you can pass a
-``context_callback`` awaitable as a kwarg to ``run_script``. This is run at the
-start of the MQTT loop, and should return a dict which will be merged into the
-kwargs which are passed to your callback. For example::
-
-  from mqttwrapper.hbmqtt_backend import run_script
-
-  async def setup_db():
-    return {
-      "query_db": query_db
-    }
-
-  async def query_db(value):
-    # pretend this is some slow DB query, for example.
-    await asyncio.sleep(3)
-    return value * 2
-
-  async def callback(topic, payload, query_db):
-      db_result = await query_db(int(payload))
-      print("Received payload {} on topic {}, db result: {}".format(payload, topic, db_result))
-
-  def main():
-      run_script(callback, context_callback=setup_db)
-
-
-NB hbmqtt's reconnection handling does not resubscribe to topics upon
-reconnection, and ``mqttwrapper`` does not yet work around this.
 
 Examples
 --------
 
 - rxv2mqtt_
-- tradfri-mqtt_ (uses asyncio)
 
 .. _rxv2mqtt: https://github.com/davea/rxv2mqtt/blob/master/main.py
-.. _tradfri-mqtt: https://github.com/davea/tradfri-mqtt/blob/master/main.py
