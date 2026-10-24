@@ -40,7 +40,7 @@ or in non blocking mode::
           echo "Alive and kicking"
           time.sleep(1)
 
-Any extra keyword arguments passed to ``run_script`` are passed back to the
+Most extra keyword arguments passed to ``run_script`` are passed back to the
 callback function when it's called::
 
   from mqttwrapper import run_script
@@ -53,6 +53,18 @@ callback function when it's called::
   def main():
       run_script(callback, broker="mqtt://127.0.0.1", topics=["my/awesome/topic1", "another/awesome/topic2"], context="hello", foo="bar")
 
+
+However some are reserved and will be consumed by ```run_script``` to configure how the MQTT connection behaves:
+
+
+- ``broker`` (default ``MQTT_BROKER`` from environment, otherwise ``None``): broker URL, e.g ``mybroker``, ``mqtts://securebroker:8884``, ``mqtt://username:password@coolbroker.example.org``
+- ``topics`` (default ``MQTT_TOPICS`` from environment, otherwise ``None``): list of topics to subscribe to
+- ``ignore_retained`` (default ``False``): whether to ignore a received message if it was marked as retained
+- ``blocking`` (default ``True``): run in blocking or threaded mode
+- ``client_id`` (default ``"",``): client ID to use when connecting to broker
+- ``clean_session`` (default ``True``): whether to use a clean session upon (re)connect, or resume previous session. ``client_id`` must be provided if ``True``
+- ``qos`` (default ``0``): QoS to use for connection
+- ``raise_exceptions`` (default ``False``): whether to raise exceptions that occur during callback execution
 
 If you don't need any context passed to your callback, just the topic and
 payload of messages, you can run in 'importless' mode by creating a `callback`
@@ -90,6 +102,8 @@ e.g.::
 
 These tuples can optionally take the form ``(topic, payload, True)`` if you want
 the published message to be marked as retained.
+
+NB any exceptions raised during execution of the callback will be logged and ignored, unless ``raise_exceptions=True`` is passed to ``run_script``.
 
 Configuration
 -------------
